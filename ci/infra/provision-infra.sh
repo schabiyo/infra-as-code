@@ -10,7 +10,7 @@ az group create --name "$rg_name" --location "$rg_location"
 az group show $rg_name 1> /dev/null
 
 if [ $? != 0 ]; then
-	echo "Resource group with name" $resourceGroupName "could not be found. Creating new resource group.."
+	echo "Resource group with name" $rg_name "could not be found. Creating new resource group.."
 	set -e
 	(
 		set -x
@@ -24,7 +24,8 @@ fi
 echo "Starting deployment..."
 (
 	set -x
-	az group deployment create --name $deploymentName -g $rg_name --template-file $templateFilePath --parameters-file $parametersFilePath --verbose
+	az group deployment create --name web-nodejs  -g $rg_name --template-file web-nodejs/arm/appservice-template.json \
+             --parameters "{\"storageAccountType\":{\"value\":\"Standard_GRS\"}}" --verbose
 )
 
 if [ $?  == 0 ]; 
